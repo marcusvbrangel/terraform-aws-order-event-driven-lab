@@ -303,6 +303,127 @@ resource "aws_api_gateway_stage" "lab" {
 }
 
 
+
+# ///////////////////////////////////////////////////////////////////////////////
+# SEGUNDA PARTE:  ORDER SERVICE LAMBDA
+# ///////////////////////////////////////////////////////////////////////////////
+
+
+# ============================================================
+# LAMBDA ORDER SERVICE - IAM ROLE
+#
+# Trust Policy:
+# permite que o serviço AWS Lambda assuma esta role.
+# ============================================================
+
+resource "aws_iam_role" "order_service_lambda" {
+  name = "order-service-lambda-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+
+        Action = "sts:AssumeRole"
+      }
+    ]
+  })
+}
+
+# ============================================================
+# LAMBDA ORDER SERVICE - PERMISSIONS
+#
+# Permite:
+# - consumir mensagens somente da order-service-queue
+# - escrever logs no CloudWatch
+# ============================================================
+
+resource "aws_iam_role_policy" "order_service_lambda" {
+  name = "order-service-lambda-policy"
+  role = aws_iam_role.order_service_lambda.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+
+    Statement = [
+      {
+        Effect = "Allow"
+
+        Action = [
+          "sqs:ReceiveMessage",
+          "sqs:DeleteMessage",
+          "sqs:GetQueueAttributes"
+        ]
+
+        Resource = aws_sqs_queue.order_service.arn
+      },
+      {
+        Effect = "Allow"
+
+        Action = [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+        ]
+
+        Resource = "arn:aws:logs:us-east-1:*:*"
+      }
+    ]
+  })
+}
+
+
+# ============================================================
+# LAMBDA - ORDER SERVICE
+# ============================================================
+
+resource "aws_lambda_function" "order_service" {
+  function_name = "order-service"
+
+  role = aws_iam_role.order_service_lambda.arn
+
+  runtime = "java21"
+
+  handler = "lab.order.OrderHandler::handleRequest"
+
+  filename = "${path.module}/lambda/order-service/target/order-service-1.0.0.jar"
+
+  source_code_hash = filebase64sha256(
+    "${path.module}/lambda/order-service/target/order-service-1.0.0.jar"
+  )
+
+  memory_size = 512
+  timeout     = 15
+}
+
+# ============================================================
+# SQS -> Lambda
+# ============================================================
+#
+# Event Source Mapping conecta a fila order-service-queue
+# à Lambda order-service.
+#
+# Quando houver mensagens disponíveis na SQS, o serviço Lambda
+# fará polling da fila e invocará automaticamente nossa função.
+
+resource "aws_lambda_event_source_mapping" "order_service" {
+
+  event_source_arn = aws_sqs_queue.order_service.arn
+
+  function_name = aws_lambda_function.order_service.arn
+
+  batch_size = 1
+
+  enabled = true
+}
+
+
 # ============================================================
 # OUTPUT
 # ============================================================
@@ -310,3 +431,19 @@ resource "aws_api_gateway_stage" "lab" {
 output "orders_api_url" {
   value = "https://${aws_api_gateway_rest_api.orders.id}.execute-api.us-east-1.amazonaws.com/${aws_api_gateway_stage.lab.stage_name}/orders"
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

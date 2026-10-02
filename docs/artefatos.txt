@@ -107,6 +107,96 @@ aws sqs receive-message \
 
 --------------------------------------------------------------------
 
+cd lambda/order-service
+
+mvn dependency:resolve
+
+
+
+--------------------------------------------------------------------
+
+mvn -f lambda/order-service/pom.xml clean package
+
+
+--------------------------------------------------------------------
+
+
+mvn -f lambda/order-service/pom.xml clean package
+
+ls -lh lambda/order-service/target/
+
+
+--------------------------------------------------------------------
+
+terraform fmt
+terraform validate
+terraform plan
+
+
+--------------------------------------------------------------------
+
+
+wolf@base:~/Documentos/desenvolvimento/estudos/terraform-aws-order-event-driven-lab$ aws lambda get-function \
+  --function-name order-service \
+  --profile terraform-lab
+{
+    "Configuration": {
+        "FunctionName": "order-service",
+        "FunctionArn": "arn:aws:lambda:us-east-1:186969931761:function:order-service",
+        "Runtime": "java21",
+        "Role": "arn:aws:iam::186969931761:role/order-service-lambda-role",
+        "Handler": "lab.order.OrderHandler::handleRequest",
+        "CodeSize": 1167185,
+        "Description": "",
+        "Timeout": 15,
+        "MemorySize": 512,
+        "LastModified": "2026-10-02T03:46:06.314+0000",
+        "CodeSha256": "kbMBK/4MJiQKbu/Q9HqalpacJ8jcOck3zo9kDnpwlfY=",
+        "Version": "$LATEST",
+        "TracingConfig": {
+            "Mode": "PassThrough"
+        },
+        "RevisionId": "a4b3c7ea-5d7f-4f98-928e-14a2ee78e789",
+        "State": "Active",
+        "LastUpdateStatus": "Successful",
+        "PackageType": "Zip",
+        "Architectures": [
+            "x86_64"
+        ],
+        "EphemeralStorage": {
+            "Size": 512
+        },
+        "SnapStart": {
+            "ApplyOn": "None",
+            "OptimizationStatus": "Off"
+        },
+        "RuntimeVersionConfig": {
+            "RuntimeVersionArn": "arn:aws:lambda:us-east-1::runtime:4ba7745a18788c9c9b5b35147000932c106eb1df13744d52691b3aef27f5a57c"
+        },
+        "LoggingConfig": {
+            "LogFormat": "Text",
+            "LogGroup": "/aws/lambda/order-service"
+        }
+    },
+    "Code": {
+        "RepositoryType": "S3",
+        "Location": "https://prod-04-2014-tasks.s3.us-east-1.amazonaws.com/snapshots/186969931761/order-service-68df152e-b14f-40da-a3cf-bf6eb2bbc43f?versionId=cpYrOy4QdvqiAvdgsn9lE2JpvPyjcAOb&X-Amz-Security-Token=IQoJb3JpZ2luX2VjEMH%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJIMEYCIQCyZe9AGaVgaeow7IINm7KoX9GdQHwhhZlicI%2FaHCMZ%2FQIhAKUY8CfI5ocXHmC9rkwvZ0YkK3Kj4zqbcx3FYHyBIH6bKpQCCIr%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEQABoMNzQ5Njc4OTAyODM5IgwRBBTw%2F%2F7PevvnHkYq6AEBxZ7fadHj10oOM31RGjAG9NzhW%2BNtCA7I7sS6sjaqqJWiiAGaIV%2F4iSbIKE2zdUr0u1loOS0imdQDMHFn6WnmBbb3QXQS6oUqkn3xqk1GUfEluaVwcYT3Uhs8NmmZOV%2BkDO25sIriU%2Fx5rWqvGKNoQ%2Bg%2FMvM4inuEgjFoBIbDvSDwE3uvid70OtX9pl7AxGvm3Ht9b7IdSKYJ9eVS3%2FheTOhLMJaZ71NHx3zCAPUNVAGRAq%2B0BWHgGrsFrar8wu9Lv1HbIAyjibpc%2FR%2Fxo1MfKPfb%2BeRWLLKvrSgbmhspkUpGRf1PomYaMMr%2B%2B9UGOowBEh2Ymra9djU51nKx0XLknC%2FU%2BuqDCWFKoLsSJcaVezkzV9b0bgy6tnfIOtJnVByLILCdpaEd1eSdhew2AkjVCWwVWftbbscnUOqNb%2BNME02sKvd7NEPI1eGl714350lR8fbsGchcDLrtAi70Eq%2BHMhTYeAl3PQn7tFdZ3mpvl9NdHWKNJP1RemxokZ8%3D&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20261002T035159Z&X-Amz-SignedHeaders=host&X-Amz-Expires=600&X-Amz-Credential=ASIA25DCYHY32Z3IKIIN%2F20261002%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=19c16ed6b6d47ca5907be6254a4f9c636526ae765571cc466616e6e440cf8389"
+    }
+}
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------
 
 
 
@@ -121,6 +211,15 @@ aws sqs receive-message \
 
 
 
+--------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------
+
+
+
 
 --------------------------------------------------------------------
 
@@ -128,6 +227,9 @@ aws sqs receive-message \
 
 
 --------------------------------------------------------------------
+
+
+
 
 
 

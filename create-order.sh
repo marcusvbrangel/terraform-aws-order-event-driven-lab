@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-API_URL="https://b1b7mkijz0.execute-api.us-east-1.amazonaws.com/lab/orders"
+API_URL=$(terraform output -raw orders_api_url)
 
 curl --request POST \
   --url "$API_URL" \
