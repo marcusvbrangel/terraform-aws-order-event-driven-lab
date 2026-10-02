@@ -1,0 +1,188 @@
+
+--------------------------------------------------------------------
+
+
+--------------------------------------------------------------------
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------
+
+
+cd terraform-aws-order-event-driven-lab
+
+touch providers.tf
+
+
+
+terraform init
+
+terraform fmt
+
+terraform validate
+
+terraform plan
+
+terraform apply
+
+
+terraform state list
+
+terraform destroy
+
+
+--------------------------------------------------------------------
+
+
+terraform console
+
+aws_sns_topic.order_requested.arn
+
+    "arn:aws:sns:us-east-1:186969931761:order-requested"
+
+aws_sqs_queue.order_service.arn
+
+    "arn:aws:sqs:us-east-1:186969931761:order-service-queue"
+
+
+
+
+> jsonencode({
+:   Version = "2012-10-17"
+:   Statement = [
+:     {
+:       Effect = "Allow"
+:       Principal = {
+:         Service = "sns.amazonaws.com"
+:       }
+:       Action   = "sqs:SendMessage"
+:       Resource = aws_sqs_queue.order_service.arn
+:       Condition = {
+:         ArnEquals = {
+:           "aws:SourceArn" = aws_sns_topic.order_requested.arn
+:         }
+:       }
+:     }
+:   ]
+: })
+"{\"Statement\":[{\"Action\":\"sqs:SendMessage\",\"Condition\":{\"ArnEquals\":{\"aws:SourceArn\":\"arn:aws:sns:us-east-1:186969931761:order-requested\"}},\"Effect\":\"Allow\",\"Principal\":{\"Service\":\"sns.amazonaws.com\"},\"Resource\":\"arn:aws:sqs:us-east-1:186969931761:order-service-queue\"}],\"Version\":\"2012-10-17\"}"
+>  
+
+
+exit
+
+
+
+--------------------------------------------------------------------
+
+
+aws sts get-caller-identity --profile terraform-lab
+
+aws configure list --profile terraform-lab
+
+
+
+--------------------------------------------------------------------
+
+
+create-order.sh
+
+chmod +x create-order.sh
+
+./create-order.sh
+
+
+
+aws sqs receive-message \
+  --queue-url https://sqs.us-east-1.amazonaws.com/186969931761/order-service-queue \
+  --max-number-of-messages 1 \
+  --wait-time-seconds 10 \
+  --profile terraform-lab
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+--------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
